@@ -48,7 +48,6 @@ snakemake -prk \
   --time={cluster.time} \
   --mem={cluster.mem} \
   --output={cluster.output}"
-
 ```
 
 ## Run pipeline
