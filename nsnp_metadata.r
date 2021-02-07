@@ -25,10 +25,10 @@ stopifnot(all(keeplist$newid == fulllist$newid[m]))
 keeplist$pheno_sex <- fulllist$pheno_sex[m]
 
 a <- keeplist %$% tibble(
+	filename=paste0(id, ".gz"),
 	id=paste0("ukbb-e-", id),
 	pmid=NA,
 	year=2020,
-	filename=file.path(datadir),
 	mr=1,
 	trait=description,
 	category=case_when(
