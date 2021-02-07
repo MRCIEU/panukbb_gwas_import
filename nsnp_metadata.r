@@ -2,23 +2,30 @@ library(tidyverse)
 library(magrittr)
 library(jsonlite)
 
-datadir <- read_json("config.json")
+datadir <- read_json("config.json")$datadir
 
 nsnp <- tibble(
-	nsnpfiles = list.files(".", "*.nsnp"),
+	nsnpfiles = list.files(file.path(datadir, "ready"), "*.nsnp"),
+	id = basename(nsnpfiles) %>% gsub(".nsnp", "", .) %>% paste0("ukbb-e-", .),
 	nsnp = sapply(seq_along(nsnpfiles), function(i)
 	{
-		scan(nsnpfiles[i], what="numeric")
+		scan(file.path(datadir, "ready", nsnpfiles[i]), what=numeric())
 	})
 )
 
 nrow(nsnp)
+summary(nsnp$nsnp)
 
 load("dl.rdata")
 nrow(keeplist)
 
-b <- keeplist %$% tibble(
-	id=paste0("ukbb-e-", id)),
+m <- match(keeplist$newid, fulllist$newid)
+
+stopifnot(all(keeplist$newid == fulllist$newid[m]))
+keeplist$pheno_sex <- fulllist$pheno_sex[m]
+
+a <- keeplist %$% tibble(
+	id=paste0("ukbb-e-", id),
 	pmid=NA,
 	year=2020,
 	filename=file.path(datadir),
@@ -30,7 +37,7 @@ b <- keeplist %$% tibble(
 	),
 	subcategory="NA",
 	population=case_when(
-		pop == "AFR" ~ "Sub-Saharan African",
+		pop == "AFR" ~ "African American or Afro-Caribbean",
 		pop == "MID" ~ "Greater Middle Eastern (Middle Eastern, North African, or Persian)",
 		pop == "EAS" ~ "East Asian",
 		pop == "CSA" ~ "South Asian",
@@ -60,7 +67,7 @@ b <- keeplist %$% tibble(
 	header=FALSE
 )
 
-b <- inner_join(b, nsnp, by="id")
+b <- inner_join(a, nsnp, by="id")
 
 str(b)
 write.csv(b, file.path(datadir, "ready", "input.csv"))
