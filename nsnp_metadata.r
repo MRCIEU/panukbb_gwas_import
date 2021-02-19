@@ -6,7 +6,7 @@ datadir <- read_json("config.json")$datadir
 
 nsnp <- tibble(
 	nsnpfiles = list.files(file.path(datadir, "ready"), "*.nsnp"),
-	id = basename(nsnpfiles) %>% gsub(".nsnp", "", .) %>% paste0("ukbb-e-", .),
+	id = basename(nsnpfiles) %>% gsub(".nsnp", "", .) %>% paste0("ukb-e-", .),
 	nsnp = sapply(seq_along(nsnpfiles), function(i)
 	{
 		scan(file.path(datadir, "ready", nsnpfiles[i]), what=numeric())
@@ -26,7 +26,7 @@ keeplist$pheno_sex <- fulllist$pheno_sex[m]
 
 a <- keeplist %$% tibble(
 	filename=paste0(id, ".gz"),
-	id=paste0("ukbb-e-", id),
+	id=paste0("ukb-e-", id),
 	pmid=NA,
 	year=2020,
 	mr=1,
