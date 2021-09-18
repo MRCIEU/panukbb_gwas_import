@@ -11,8 +11,13 @@ fulllist$traitnum <- 1:nrow(fulllist)
 fulllist$newid <- NA
 fulllist$trait <- NA
 
+# total number
+a <- strsplit(fulllist$pops, ",")
+length(unlist(a))
+table(unlist(a))
+
 # numeric columns need to be coerced
-pops <- c("MID", "CSA", "EAS", "AMR", "AFR")
+pops <- c("MID", "CSA", "EAS", "AMR", "AFR", "EUR")
 vars <- c("n_controls", "n_cases", "saige_heritability")
 expand.grid(pops=pops, vars=vars) %>%
 	mutate(v = paste0(vars, "_", pops)) %>%
@@ -23,6 +28,8 @@ expand.grid(pops=pops, vars=vars) %>%
 		fulllist[[x]][is.na(fulllist[[x]])] <<- 0
 		return(x)
 	})
+
+
 
 # unique phenocodes
 tempgood <- fulllist %>%
